@@ -8,16 +8,12 @@ on:
 
 jobs:
   tests:
-    name: PHP ${{ matrix.php }} - ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    name: PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
-        os: [ubuntu-latest]
-        include:
-          - php: '8.5'
-            os: ubuntu-latest
+        php: ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5']
 
     steps:
       - uses: actions/checkout@v4
@@ -33,10 +29,10 @@ jobs:
         run: composer install --prefer-dist --no-progress
 
       - name: Run tests
-        run: vendor/bin/phpunit --coverage-clover coverage.xml
+        run: vendor/bin/phpunit --coverage-filter=src --coverage-clover=coverage.xml
 
       - name: Upload coverage
-        if: matrix.php == '8.3' && matrix.os == 'ubuntu-latest'
+        if: matrix.php == '8.3'
         uses: codecov/codecov-action@v4
         with:
           file: coverage.xml
