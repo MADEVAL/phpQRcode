@@ -79,7 +79,10 @@ final class PngRenderer implements RendererInterface
         ob_start();
         imagepng($image);
         $data = ob_get_clean();
-        imagedestroy($image);
+
+        if (PHP_VERSION_ID < 80000) {
+            imagedestroy($image);
+        }
 
         if ($data === false) {
             throw new \RuntimeException('Failed to capture PNG output');
