@@ -117,6 +117,7 @@ final class Version
      */
     private static function buildCapacityTable(): array
     {
+        /** @var int[][][]|null $table */
         static $table = null;
 
         if ($table !== null) {

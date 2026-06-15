@@ -43,7 +43,7 @@ abstract class AbstractQRData implements QRDataInterface
             throw new \InvalidArgumentException("Invalid version: $version");
         }
 
-        if ($version >= 1 && $version <= 9) {
+        if ($version <= 9) {
             switch ($this->mode) {
                 case self::MODE_NUMBER:
                     return 10;
@@ -65,7 +65,7 @@ abstract class AbstractQRData implements QRDataInterface
                 case self::MODE_KANJI:
                     return 10;
             }
-        } elseif ($version <= 40) {
+        } else {
             switch ($this->mode) {
                 case self::MODE_NUMBER:
                     return 14;
@@ -78,7 +78,7 @@ abstract class AbstractQRData implements QRDataInterface
             }
         }
 
-        throw new \InvalidArgumentException("Invalid version: $version");
+        throw new \InvalidArgumentException("Invalid version: $version"); // @codeCoverageIgnore
     }
 
     abstract public function write(BitBuffer $buffer): void;

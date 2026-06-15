@@ -24,11 +24,18 @@ final class Polynomial
         }
 
         if ($offset >= $count) {
-            $this->coefficients = array_fill(0, max(1, $shift), 0);
+            $size = $shift > 0 ? $shift : 1;
+            /** @var int[] $filled */
+            $filled = array_fill(0, $size, 0);
+            $this->coefficients = $filled;
+
             return;
         }
 
-        $this->coefficients = array_fill(0, $count - $offset + $shift, 0);
+        $size = $count - $offset + $shift;
+        /** @var int[] $filled */
+        $filled = array_fill(0, $size, 0);
+        $this->coefficients = $filled;
 
         for ($i = 0; $i < $count - $offset; $i++) {
             $this->coefficients[$i] = $num[$i + $offset];
@@ -47,6 +54,7 @@ final class Polynomial
 
     public function multiply(self $other): self
     {
+        /** @var int[] $num */
         $num = array_fill(0, $this->getLength() + $other->getLength() - 1, 0);
 
         for ($i = 0; $i < $this->getLength(); $i++) {
@@ -67,6 +75,7 @@ final class Polynomial
         while ($current->getLength() - $other->getLength() >= 0) {
             $ratio = GaloisField::log($current->get(0)) - GaloisField::log($other->get(0));
 
+            /** @var int[] $num */
             $num = array_fill(0, $current->getLength(), 0);
             for ($i = 0; $i < $current->getLength(); $i++) {
                 $num[$i] = $current->get($i);

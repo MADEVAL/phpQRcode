@@ -29,9 +29,13 @@ final class Encoder
     /**
      * @return bool[][]
      */
-    public static function encode(string $data, int $errorCorrectionLevel = ErrorCorrectionLevel::M, ?int $version = null): array
+    public static function encode(string $data, int $errorCorrectionLevel = ErrorCorrectionLevel::M, ?int $version = null, ?int $maskPattern = null): array
     {
         ErrorCorrectionLevel::validate($errorCorrectionLevel);
+
+        if ($maskPattern !== null && ($maskPattern < 0 || $maskPattern > 7)) {
+            throw new \InvalidArgumentException("Invalid mask pattern: $maskPattern (must be 0-7)");
+        }
 
         $mode = ModeDetector::detect($data);
         $qrData = self::createDataObject($data, $mode);
@@ -53,7 +57,7 @@ final class Encoder
         self::setupPositionAdjustPattern($modules, $moduleCount, $version);
         self::setupTimingPattern($modules, $moduleCount);
 
-        $bestPattern = self::findBestMaskPattern($modules, $moduleCount, $version, $errorCorrectionLevel, [$qrData]);
+        $bestPattern = $maskPattern ?? self::findBestMaskPattern($modules, $moduleCount, $version, $errorCorrectionLevel, [$qrData]);
 
         self::setupTypeInfo($modules, $moduleCount, false, $bestPattern, $errorCorrectionLevel);
 
@@ -222,6 +226,7 @@ final class Encoder
             $data = self::createEncodedData($version, $errorCorrectionLevel, $dataList);
             self::mapData($testModules, $moduleCount, $data, $pattern);
 
+            /** @var array<int, array<int, bool>> $boolMatrix */
             $boolMatrix = self::toBoolMatrix($testModules, $moduleCount);
             $lostPoint = MaskPattern::getLostPoint($boolMatrix, $moduleCount);
 
@@ -293,8 +298,11 @@ final class Encoder
         $maxEcCount = 0;
 
         $rsBlockCount = count($rsBlocks);
-        $dcdata = array_fill(0, $rsBlockCount, []);
-        $ecdata = array_fill(0, $rsBlockCount, []);
+
+        /** @var array<int, int[]> $dcdata */
+        $dcdata = [];
+        /** @var array<int, int[]> $ecdata */
+        $ecdata = [];
 
         for ($r = 0; $r < $rsBlockCount; $r++) {
             $dcCount = $rsBlocks[$r]->getDataCount();
@@ -303,25 +311,29 @@ final class Encoder
             $maxDcCount = max($maxDcCount, $dcCount);
             $maxEcCount = max($maxEcCount, $ecCount);
 
-            $dcdata[$r] = array_fill(0, $dcCount, 0);
+            /** @var int[] $dcRow */
+            $dcRow = array_fill(0, $dcCount, 0);
             $bdata = $buffer->getBuffer();
 
             for ($i = 0; $i < $dcCount; $i++) {
-                $dcdata[$r][$i] = 0xFF & $bdata[$i + $offset];
+                $dcRow[$i] = 0xFF & $bdata[$i + $offset];
             }
+            $dcdata[$r] = $dcRow;
             $offset += $dcCount;
 
             $rsPoly = self::getErrorCorrectPolynomial($ecCount);
             $rawPoly = new Polynomial($dcdata[$r], $rsPoly->getLength() - 1);
             $modPoly = $rawPoly->mod($rsPoly);
 
-            $ecdata[$r] = array_fill(0, $rsPoly->getLength() - 1, 0);
-            $ecDataCount = count($ecdata[$r]);
+            $ecDataCount = $rsPoly->getLength() - 1;
+            /** @var int[] $ecRow */
+            $ecRow = array_fill(0, $ecDataCount, 0);
 
             for ($i = 0; $i < $ecDataCount; $i++) {
                 $modIndex = $i + $modPoly->getLength() - $ecDataCount;
-                $ecdata[$r][$i] = ($modIndex >= 0) ? $modPoly->get($modIndex) : 0;
+                $ecRow[$i] = ($modIndex >= 0) ? $modPoly->get($modIndex) : 0;
             }
+            $ecdata[$r] = $ecRow;
         }
 
         $totalCodeCount = 0;
@@ -329,6 +341,7 @@ final class Encoder
             $totalCodeCount += $rsBlocks[$i]->getTotalCount();
         }
 
+        /** @var int[] $data */
         $data = array_fill(0, $totalCodeCount, 0);
         $index = 0;
 

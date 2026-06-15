@@ -40,6 +40,7 @@ final class GaloisField
     public static function exp(int $n): int
     {
         self::init();
+        assert(self::$expTable !== null);
 
         while ($n < 0) {
             $n += 255;
@@ -55,6 +56,7 @@ final class GaloisField
     public static function log(int $n): int
     {
         self::init();
+        assert(self::$logTable !== null);
 
         if ($n < 1) {
             throw new \InvalidArgumentException("Cannot compute log of $n in GF(256)");

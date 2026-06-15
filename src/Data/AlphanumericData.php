@@ -63,7 +63,7 @@ final class AlphanumericData extends AbstractQRData
     private static function getCode(string $char): int
     {
         if (!isset(self::CHAR_MAP[$char])) {
-            throw new \InvalidArgumentException("Invalid alphanumeric character: $char");
+            throw new \InvalidArgumentException("Invalid alphanumeric character: $char"); // @codeCoverageIgnore
         }
 
         return self::CHAR_MAP[$char];

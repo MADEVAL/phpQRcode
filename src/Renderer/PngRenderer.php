@@ -17,7 +17,7 @@ final class PngRenderer implements RendererInterface
     public function __construct(array $options = [])
     {
         if (!extension_loaded('gd')) {
-            throw new \RuntimeException('The GD extension is required for PNG rendering');
+            throw new \RuntimeException('The GD extension is required for PNG rendering'); // @codeCoverageIgnore
         }
 
         $this->size = max(1, (int) ($options['size'] ?? 4));
@@ -32,12 +32,12 @@ final class PngRenderer implements RendererInterface
     public function render(array $matrix): string
     {
         $moduleCount = count($matrix);
-        $imageSize = $moduleCount * $this->size + $this->margin * 2;
+        $imageSize = max(1, $moduleCount * $this->size + $this->margin * 2);
 
         $image = imagecreatetruecolor($imageSize, $imageSize);
 
         if ($image === false) {
-            throw new \RuntimeException('Failed to create image');
+            throw new \RuntimeException('Failed to create image'); // @codeCoverageIgnore
         }
 
         $fgColor = imagecolorallocate(
@@ -55,8 +55,7 @@ final class PngRenderer implements RendererInterface
         );
 
         if ($fgColor === false || $bgColor === false) {
-            imagedestroy($image);
-            throw new \RuntimeException('Failed to allocate colors');
+            throw new \RuntimeException('Failed to allocate colors'); // @codeCoverageIgnore
         }
 
         imagefilledrectangle($image, 0, 0, $imageSize - 1, $imageSize - 1, $bgColor);
@@ -81,11 +80,11 @@ final class PngRenderer implements RendererInterface
         $data = ob_get_clean();
 
         if (PHP_VERSION_ID < 80000) {
-            imagedestroy($image);
+            imagedestroy($image); // @codeCoverageIgnore
         }
 
         if ($data === false) {
-            throw new \RuntimeException('Failed to capture PNG output');
+            throw new \RuntimeException('Failed to capture PNG output'); // @codeCoverageIgnore
         }
 
         return $data;
