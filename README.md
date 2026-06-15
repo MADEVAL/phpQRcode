@@ -1,4 +1,4 @@
-# globus-studio/phpqrcode
+# phpQRcode
 
 Zero-dependency QR Code generator for PHP 7.4–9.0.
 
@@ -8,7 +8,7 @@ Zero-dependency QR Code generator for PHP 7.4–9.0.
 
 ## Features
 
-- Dead simple API — one line to generate QR
+- Dead simple API - one line to generate QR
 - Zero runtime dependencies
 - PHP 7.4 / 8.0 / 8.1 / 8.2 / 8.3 / 8.4 / 8.5 / 9.0
 - QR Code versions 1–40, all error correction levels
@@ -116,4 +116,4 @@ Rewritten from scratch with modern PHP practices, strict typing, full test cover
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT - see [LICENSE](LICENSE).
