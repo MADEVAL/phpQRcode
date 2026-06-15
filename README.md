@@ -2,10 +2,9 @@
 
 Zero-dependency QR Code generator for PHP 7.4–9.0.
 
-[![CI](https://github.com/MADEVAL/phpqrcode/actions/workflows/ci.yml/badge.svg)](https://github.com/MADEVAL/phpqrcode/actions)
-[![Coverage](https://codecov.io/gh/MADEVAL/phpqrcode/branch/main/graph/badge.svg)](https://codecov.io/gh/MADEVAL/phpqrcode)
-[![PHP Version](https://img.shields.io/packagist/php-v/globus-studio/phpqrcode)](https://packagist.org/packages/globus-studio/phpqrcode)
-[![License](https://img.shields.io/packagist/l/globus-studio/phpqrcode)](LICENSE)
+[![CI](https://github.com/MADEVAL/phpQRcode/actions/workflows/ci.yml/badge.svg)](https://github.com/MADEVAL/phpQRcode/actions)
+[![PHP](https://img.shields.io/badge/php-7.4%20|%208.x%20|%209.0-8892BF)](https://github.com/MADEVAL/phpQRcode)
+[![License](https://img.shields.io/github/license/MADEVAL/phpQRcode)](LICENSE)
 
 ## Features
 
