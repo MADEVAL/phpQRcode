@@ -38,4 +38,4 @@ jobs:
         if: matrix.php == '8.3'
         uses: codecov/codecov-action@v5
         with:
-          file: coverage.xml
+          files: coverage.xml
